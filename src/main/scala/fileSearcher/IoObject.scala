@@ -9,4 +9,12 @@ trait IoObject {
 
 case class FileObject(file: File) extends IoObject
 
-case class DirectoryObject(file: File) extends IoObject
+case class DirectoryObject(file: File) extends IoObject {
+  def children(): List[IoObject with Product with Serializable] =
+    try
+      file.listFiles().toList map (file => FileConverter convertToIoObject file)
+    catch {
+      case _: NullPointerException => List()
+    }
+
+}
